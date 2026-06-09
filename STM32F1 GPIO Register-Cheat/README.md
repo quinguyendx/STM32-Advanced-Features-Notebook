@@ -12,7 +12,7 @@ Mỗi Port (GPIOA, GPIOB,...) có hai thanh ghi 32-bit để cấu hình trạng
 
 Mỗi chân vật lý sẽ chiếm dụng đúng **4 bit** trong thanh ghi để thiết lập trạng thái (`2 bit MODE` và `2 bit CNF`).
 
-### 📊 Bảng Tra Cứu Trạng Thái Cấu Hình (CNF + MODE)
+### Bảng Tra Cứu Trạng Thái Cấu Hình (CNF + MODE)
 
 | Chế độ | CNF [1:0] | Thao tác / Tính năng | MODE [1:0] | Tốc độ tối đa |
 | :--- | :---: | :--- | :---: | :--- |
@@ -25,16 +25,15 @@ Mỗi chân vật lý sẽ chiếm dụng đúng **4 bit** trong thanh ghi để
 | | `10` | Alternate function Output Push-pull | `11` | Max speed 50 MHz |
 | | `11` | Alternate function Output Open-drain | | |
 
-### 🧮 Công Thức Tính Vị Trí Dịch Bit Tổng Quát `(Y << X)`
+### Công Thức Tính Vị Trí Dịch Bit Tổng Quát `(Y << X)`
 
 * **`Y` (Trạng thái):** Giá trị nhị phân hợp nhất của `CNF` và `MODE` (4 bit) tra từ bảng trên.
   * *Ví dụ:* Input Pull-up/down = `0b1000` (0x8); Output Push-pull 2MHz = `0b0010` (0x2).
-* **`X` (Vị trí Shift):** * Đối với thanh ghi **`CRL`** (Chân 0 đến 7): $X = \text{Số chân} \times 4$
+* **`X` (Vị trí Shift):**
+  * Đối với thanh ghi **`CRL`** (Chân 0 đến 7): $X = \text{Số chân} \times 4$
   * Đối với thanh ghi **`CRH`** (Chân 8 đến 15): $X = (\text{Số chân} - 8) \times 4$
 
-### 💻 Code Cấu Hình Mẫu (Thanh Ghi)
-
-Sử dụng kỹ thuật Clear-bit trước khi Ghi-bit để tránh làm ảnh hưởng đến cấu hình cũ của thanh ghi:
+### Code Cấu Hình Mẫu (Thanh Ghi)
 
 ```c
 // Cấu hình chân PA0 làm Input Pull-up/down (0b1000)
