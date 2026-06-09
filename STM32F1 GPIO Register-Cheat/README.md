@@ -44,3 +44,69 @@ GPIOA->BSRR = (1 << 0); // Kích hoạt Pull-up cho PA0
 // Cấu hình chân PC13 làm Output Push-pull 2MHz (0b0010)
 // Shift = (13 - 8) * 4 = 20
 GPIOC->CRH = (GPIOC->CRH & ~(0xF << 20)) | (0x2 << 20);
+```
+============================< IO: THANH GHI IDR/ODR >============================
+- Hai thanh ghi 16bit lưu các giá trị đọc vào / xuất ra từng chân.
+
+- ((GPIOA->IDR >> 5) & 1)        // Trả về giá trị 0/1 chân PA5
+- if(GPIOA->IDR & (1 << 5))      // Trả về giá trị 0/32
+- if(GPIOA->IDR & GPIO_IDR_IDR5) // Đơn giản hơn, dùng marco
+
+ Đọc 4 nút hoặc vài nút cùng bấm:
+-- if(((GPIOA->IDR >> 4) & 0xF) == 0xF)
+
+Ví dụ bật LED PA5
+
+GPIOA->ODR |= (1 << 5);
+
+GPIOA->ODR = 0x0020;
+
+Tắt LED:
+
+GPIOA->ODR &= ~(1 << 5);
+
+Ghi nhiều bit cùng lúc.
+
+GPIOA->ODR = 0x00F0;
+
+Đảo bit:
+
+GPIOA->ODR ^= (1 << 5);
+
+==========================< OUT: THANH GHI BRR/BSRR >==========================
+- BRR: 16 bit, lưu các giá trị để reset 16 chân.
+- BSRR: 32 bit, 0->15 lưu các giá trị set on của chân, 16->31 là reset chân.
+
+Ví dụ bật LED PA5:
+
+GPIOA->BSRR = (1 << 5);
+
+Tắt LED:
+
+GPIOA->BSRR = (1 << (5+16));
+
+GPIOA->BRR = (1 << 5);
+
+Ví dụ bật LED PC13:
+
+GPIOC->BSRR = GPIO_PIN_13;
+
+
+Tắt LED:
+
+GPIOC->BRR  = GPIO_PIN_13;
+
+Chuyển number thành nhị phân rồi xuất:
+
+GPIOA->BRR  = 0x0F;  // clear
+
+GPIOA->BSRR = (number & 0x0F);
+
+Reset và set cùng một lần:
+
+GPIOA->BSRR = (0x000F << 16) | (number & 0x0F);
+
+Set PA3 và reset PA2 cùng lúc:
+
+GPIOA->BSRR = (1 << 3) | (1 << (2 + 16));
+
