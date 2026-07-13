@@ -4,57 +4,78 @@ Tài liệu tóm tắt cấu trúc và cách cấu hình hệ thống ngoại vi
 
 ---
 
-## Bật clock cấu hình cho các port: (cấp điện cho các thanh ghi hoạt động)
+### Bật clock cấu hình cho các port: (cấp điện cho các thanh ghi hoạt động)
 RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
+
 RCC->AHB1ENR |= RCC_AHB1ENR_GPIOBEN;
+
 RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN;
 
-## A. Cấu Hình Chân Với các Thanh Ghi `MODER, OTYPER, OSPEEDR, PUPDR, AFR, LCKR`
+### A. Cấu Hình Chân Với các Thanh Ghi `MODER, OTYPER, OSPEEDR, PUPDR, AFR, LCKR`
 
 1. MODER - Chọn chức năng của chân. 32 bit, Mỗi chân dùng 2 bit.
 
 MODER	Chế độ
+
 00	Input
+
 01	General purpose Output
+
 10	Alternate Function
+
 11	Analog
 
-- Ví dụ PA5 CPU OUTPUT: 
+- Ví dụ PA5 CPU OUTPUT:
+- 
   GPIOA->MODER &= ~(3 << (5*2));   // clear trước
+  
   GPIOA->MODER |=  (1 << (5*2));   // General purpose Output
 
 ---------------------------------------------------------------------------------
 2. OTYPER - Kiểu Output. 16bit, Mỗi chân chỉ có 1 bit.
 
 Bit	Chế độ
+
 0	Push Pull
+
 1	Open Drain
 
 GPIOA->OTYPER &= ~(1<<5);     // Push Pull
+
 GPIOA->OTYPER |= (1<<5);      // Open Drain
 
 ---------------------------------------------------------------------------------
 3. OSPEEDR - Tốc độ Output. 32 bit, Mỗi chân dùng 2 bit.
 
 OSPEEDR	Tốc độ
+
 00	Low
+
 01	Medium
+
 10	High
+
 11	Very High
 
 GPIOA->OSPEEDR &= ~(3<<(5*2));     // clear
+
 GPIOA->OSPEEDR |=  (2<<(5*2));     // High
 
 ---------------------------------------------------------------------------------
 4. PUPDR - Điện trở kéo
 
 PUPDR	Chế độ
+
 00	No pull
+
 01	Pull-up
+
 10	Pull-down
+
 11	Reserved
 
 GPIOA->PUPDR &= ~(3<<(5*2));      // clear
+
 GPIOA->PUPDR |=  (1<<(5*2));      // Pull-up
 
 ---------------------------------------------------------------------------------
@@ -63,18 +84,24 @@ GPIOA->PUPDR |=  (1<<(5*2));      // Pull-up
 - AFR được chia làm hai thanh ghi:
 
 AFRL : Pin 0 → 7.   GPIOx->AFR[0].  (0xF << (7*4))
+
 AFRH : Pin 8 → 15.  GPIOx->AFR[1].  (0xF << ((8-8)*4))
 
 - Ví dụ PA8 làm TIM1_CH1:
+- 
 GPIOA->AFR[1] &= ~(0xF << ((8-8)*4));   // clear
+
 GPIOA->AFR[1] |=  (1 << ((8-8)*4));     // AF1
 
 ---------------------------------------------------------------------------------
-6 IO: THANH GHI IDR/ODR
+ ### B. IO VỚI CÁC THANH GHI THANH GHI IDR/ODR, BSRR.
+ 1.  IDR/ODR. (Input register) / (outPut register)
 - Hai thanh ghi 16bit lưu các giá trị đọc vào / xuất ra từng chân.
 
 - ((GPIOA->IDR >> 5) & 1)        // Trả về giá trị 0/1 chân PA5
+
 - if(GPIOA->IDR & (1 << 5))      // Trả về giá trị 0/32
+
 - if(GPIOA->IDR & GPIO_IDR_IDR5) // Đơn giản hơn, dùng marco
 
  Đọc 4 nút hoặc vài nút cùng bấm:
@@ -99,6 +126,8 @@ GPIOA->ODR = 0x00F0;
 GPIOA->ODR ^= (1 << 5);
 
 ---------------------------------------------------------------------------------
-7. BSRR: Bit set reset register
+2. BSRR: Bit set reset register
+
 GPIOA->BSRR = (1<<5);      // Set PA1
+
 GPIOA->BSRR = (1<<(5+16)); // Reset PA1
