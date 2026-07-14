@@ -27,7 +27,7 @@ MODER	Chế độ
 
 - Ví dụ PA5 CPU OUTPUT:
 - 
-  GPIOA->MODER &= ~(3 << (5*2));   // clear trước
+  GPIOA->MODER &= ~(3 << (5*2));   // clear PA5
   
   GPIOA->MODER |=  (1 << (5*2));   // General purpose Output
 
@@ -57,9 +57,9 @@ OSPEEDR	Tốc độ
 
 11	Very High
 
-GPIOA->OSPEEDR &= ~(3<<(5*2));     // clear
+GPIOA->OSPEEDR &= ~(3<<(5*2));     // clear PA5
 
-GPIOA->OSPEEDR |=  (2<<(5*2));     // High
+GPIOA->OSPEEDR |=  (2<<(5*2));     // High speed PA5
 
 ---------------------------------------------------------------------------------
 4. PUPDR - Điện trở kéo
@@ -74,24 +74,24 @@ PUPDR	Chế độ
 
 11	Reserved
 
-GPIOA->PUPDR &= ~(3<<(5*2));      // clear
+GPIOA->PUPDR &= ~(3<<(5*2));      // clear PA5
 
-GPIOA->PUPDR |=  (1<<(5*2));      // Pull-up
+GPIOA->PUPDR |=  (1<<(5*2));      // Pull-up PA5
 
 ---------------------------------------------------------------------------------
 5. AFR - Alternate Function (Cấu hình ngoại vi peripheral). Mỗi chân dùng 4 bit.
 - Tra AF và chọn chân theo datasheet của F411, (Table 9. Alternate function mapping)
 - AFR được chia làm hai thanh ghi:
 
-AFRL : Pin 0 → 7.   GPIOx->AFR[0].  (0xF << (7*4))
+AFRL : Pin 0 → 7.   GPIOx->AFR[0].  (0xF << (7*4))      // Px7
 
-AFRH : Pin 8 → 15.  GPIOx->AFR[1].  (0xF << ((8-8)*4))
+AFRH : Pin 8 → 15.  GPIOx->AFR[1].  (0xF << ((8-8)*4))  // Px8
 
 - Ví dụ PA8 làm TIM1_CH1:
 - 
-GPIOA->AFR[1] &= ~(0xF << ((8-8)*4));   // clear
+GPIOA->AFR[1] &= ~(0xF << ((8-8)*4));   // clear PA8
 
-GPIOA->AFR[1] |=  (1 << ((8-8)*4));     // AF1
+GPIOA->AFR[1] |=  (1 << ((8-8)*4));     // AF1 PA8 TIM1_CH1
 
 ---------------------------------------------------------------------------------
  ### B. IO VỚI CÁC THANH GHI THANH GHI IDR/ODR, BSRR.
